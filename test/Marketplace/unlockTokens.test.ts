@@ -6,6 +6,9 @@ import { ContractTransaction } from "ethers";
 import { standardPrepare, createOffer } from "@test-utils";
 
 describe("Method: unlockTokens", () => {
+  let price: number = 100_000_000;
+  let fee: number = 1000 // 1% = 100
+
   async function deployMarketplace() {
     const deploy = await standardPrepare();
 
@@ -23,7 +26,7 @@ describe("Method: unlockTokens", () => {
 
     await deploy.myToken20
       .connect(deploy.buyer)
-      .approve(deploy.marketplace.address, 100_000_000);
+      .approve(deploy.marketplace.address, price);
     await deploy.marketplace.connect(deploy.buyer).acceptOffer(0);
     return {
       ...deploy,
@@ -75,14 +78,14 @@ describe("Method: unlockTokens", () => {
       await expect(result).to.changeTokenBalances(
         myToken20,
         [marketplace, owner],
-        [-10_000_000, 10_000_000]
+        [-(price * fee / 10000), (price * fee / 10000)]
       );
     });
 
     it("should emit Withdraw event", async () => {
       await expect(result)
         .to.emit(marketplace, "Withdraw")
-        .withArgs(myToken20.address, 10_000_000);
+        .withArgs(myToken20.address, (price * fee / 10000));
     });
   });
 });

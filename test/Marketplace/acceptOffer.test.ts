@@ -4,6 +4,9 @@ import { ZERO_ADDRESS } from "../utils/constants";
 import { standardPrepare, createOffer } from "@test-utils";
 
 describe("Method: acceptOffer", () => {
+  let price: number = 100_000_000;
+  let fee: number = 1000 // 1% = 100
+
   async function deployMarketplace() {
     const deploy = await standardPrepare();
 
@@ -16,14 +19,14 @@ describe("Method: acceptOffer", () => {
       deploy.myToken721,
       deploy.myToken20.address,
       0,
-      100_000_000
+      price
     );
 
     await deploy.myToken721.connect(deploy.seller).approve(deploy.marketplace.address, 1);
 
     await deploy.marketplace
       .connect(deploy.seller)
-      .createOffer(deploy.myToken721.address, 1, ZERO_ADDRESS, 100_000_000);
+      .createOffer(deploy.myToken721.address, 1, ZERO_ADDRESS, price);
 
     return {
       ...deploy,
@@ -51,7 +54,7 @@ describe("Method: acceptOffer", () => {
       const { buyer, marketplace } = await loadFixture(deployMarketplace);
 
       await expect(
-        marketplace.connect(buyer).acceptOffer(0, { value: 100_000_000 })
+        marketplace.connect(buyer).acceptOffer(0, { value: price })
       ).to.be.revertedWithCustomError(marketplace, "WithoutEther");
     });
 
@@ -70,7 +73,7 @@ describe("Method: acceptOffer", () => {
         deployMarketplace
       );
 
-      await myToken20.connect(buyer).approve(marketplace.address, 100_000_000);
+      await myToken20.connect(buyer).approve(marketplace.address, price);
       expect(await myToken721.ownerOf(0)).to.eq(seller.address);
 
       let tx = await marketplace.connect(buyer).acceptOffer(0);
@@ -78,7 +81,7 @@ describe("Method: acceptOffer", () => {
       await expect(tx).to.changeTokenBalances(
         myToken20,
         [seller, marketplace, buyer],
-        [90_000_000, 10_000_000, -100_000_000]
+        [(price - (price * fee / 10000)), (price * fee / 10000), -price]
       );
       expect(await marketplace.isOfferActive(0)).to.eq(false);
       expect(await myToken721.ownerOf(0)).to.eq(buyer.address);
@@ -92,11 +95,11 @@ describe("Method: acceptOffer", () => {
 
       expect(await myToken721.ownerOf(1)).to.eq(seller.address);
 
-      let tx = await marketplace.connect(buyer).acceptOffer(1, { value: 100_000_000 });
+      let tx = await marketplace.connect(buyer).acceptOffer(1, { value: price });
 
       await expect(tx).to.changeEtherBalances(
         [seller, marketplace, buyer],
-        [90_000_000, 10_000_000, -100_000_000]
+        [(price - (price * fee / 10000)), (price * fee / 10000), -price]
       );
       expect(await marketplace.isOfferActive(1)).to.eq(false);
       expect(await myToken721.ownerOf(1)).to.eq(buyer.address);
