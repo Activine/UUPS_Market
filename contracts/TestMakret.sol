@@ -49,10 +49,10 @@ contract Marketplace is
     error UnequalLength();
     error UnsupportedNFT();
     error UnsupportedSaleToken();
-    error NotApprowed();
+    error NotApproved();
     error NotActiveOffer();
     error ExceptOwner();
-    error OnlyOwner();
+    error NotAnOwner();
     error InvalidPrice();
     error EtherNotSended();
     error OnlyPositivePrice();
@@ -184,7 +184,7 @@ contract Marketplace is
             if (!whitelistedTokens20.contains(saleToken)) revert UnsupportedSaleToken();
         }
         if (address(this) != IERC721Upgradeable(token).getApproved(tokenId))
-            revert NotApprowed();
+            revert NotApproved();
         uint256 offerId = uint256(_offersCounter.current());
         offers[offerId] = OfferData(msg.sender, price, token, tokenId, saleToken, true);
         _offersCounter.increment();
@@ -245,7 +245,7 @@ contract Marketplace is
      */
     function cancelOffer(uint256 id) external nonReentrant {
         if (!isOfferActive(id)) revert NotActiveOffer();
-        if (offers[id].creator != msg.sender) revert OnlyOwner();
+        if (offers[id].creator != msg.sender) revert NotAnOwner();
         offers[id].active = false;
         emit OfferCanceled(msg.sender, id);
     }
@@ -262,7 +262,7 @@ contract Marketplace is
         address saleToken
     ) external nonReentrant {
         if (!isOfferActive(offerId)) revert NotActiveOffer();
-        if (offers[offerId].creator != msg.sender) revert OnlyOwner();
+        if (offers[offerId].creator != msg.sender) revert NotAnOwner();
         if (price == 0) revert OnlyPositivePrice();
         offers[offerId].price = price;
         if (saleToken == address(0)) {

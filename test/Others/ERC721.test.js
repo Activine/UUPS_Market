@@ -19,7 +19,6 @@
 //     user1 = accounts[1];
 //     user2 = accounts[2];
 
-
 //     Test721Box = await ethers.getContractFactory("MyToken721");
 //     Test721Box2 = await ethers.getContractFactory("MyToken721V2");
 //     // eslint-disable-next-line camelcase
