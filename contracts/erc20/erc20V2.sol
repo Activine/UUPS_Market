@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import {PausableUpgradeable} from "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {Initializable, UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 contract MyTokenV2 is
     Initializable,
@@ -19,24 +18,10 @@ contract MyTokenV2 is
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     /// @custom:oz-upgrades-unsafe-allow constructor
+    // solhint-disable-next-line
     constructor() {
         _disableInitializers();
     }
-
-    // function initialize(
-    //   string memory _name,
-    //   string memory _symbol
-    // ) public initializer {
-    //   __ERC20_init(_name, _symbol);
-    //   __Pausable_init();
-    //   __AccessControl_init();
-    //   __UUPSUpgradeable_init();
-
-    //   _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    //   _grantRole(PAUSER_ROLE, msg.sender);
-    //   _grantRole(MINTER_ROLE, msg.sender);
-    //   _grantRole(UPGRADER_ROLE, msg.sender);
-    // }
 
     function pause() public onlyRole(PAUSER_ROLE) {
         _pause();
@@ -70,7 +55,8 @@ contract MyTokenV2 is
 
     function _authorizeUpgrade(
         address newImplementation
-    ) internal override onlyRole(UPGRADER_ROLE) {}
+    ) internal override onlyRole(UPGRADER_ROLE) {} // solhint-disable-line no-empty-blocks
 
+    // solhint-disable-next-line
     uint256[100] __gap;
 }

@@ -7,12 +7,12 @@ import { ContractTransaction } from "ethers";
 import { standardPrepare, mintingForTests } from "@test-utils";
 
 describe("Method: createOffer", () => {
-  let arrayOfSpecific = [false, false, true];
+  const arrayOfSpecific = [false, false, true];
 
   async function deployMarketplace() {
     const deploy = await standardPrepare();
 
-    let arrayOfWhitelistedTokens = [
+    const arrayOfWhitelistedTokens = [
       deploy.myToken20.address,
       ZERO_ADDRESS,
       deploy.myToken721.address,
@@ -82,8 +82,8 @@ describe("Method: createOffer", () => {
       let myToken721: MyToken721;
       let marketplace: Marketplace;
       let result: ContractTransaction;
-      let price = 100_000_000;
-      let tokenId = 0;
+      const price = 100_000_000;
+      const tokenId = 0;
 
       before(async () => {
         const { ...res } = await loadFixture(deployMarketplace);
@@ -95,6 +95,7 @@ describe("Method: createOffer", () => {
         marketplace = res.marketplace;
 
         await mintingForTests(owner, buyer, seller, myToken20, myToken721);
+
         await myToken721.connect(seller).approve(marketplace.address, tokenId);
 
         result = await marketplace
@@ -108,7 +109,7 @@ describe("Method: createOffer", () => {
       });
 
       it("should create offer", async () => {
-        let info = await marketplace.getOfferInfo(0);
+        const info = await marketplace.getOfferInfo(0);
 
         expect(info.creator).to.eq(seller.address);
         expect(info.price).to.eq(price);
@@ -136,8 +137,8 @@ describe("Method: createOffer", () => {
       let myToken721: MyToken721;
       let marketplace: Marketplace;
       let result: ContractTransaction;
-      let price = 100_000_000;
-      let tokenId = 0;
+      const price = 100_000_000;
+      const tokenId = 0;
 
       before(async () => {
         const { ...res } = await loadFixture(deployMarketplace);
@@ -162,7 +163,7 @@ describe("Method: createOffer", () => {
       });
 
       it("should create offer", async () => {
-        let info = await marketplace.getOfferInfo(0);
+        const info = await marketplace.getOfferInfo(0);
 
         expect(info.creator).to.eq(seller.address);
         expect(info.price).to.eq(price);

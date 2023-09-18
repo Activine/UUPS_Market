@@ -1,4 +1,4 @@
-describe("Marketpalce: ", () => {
+describe("Marketplace: ", () => {
   require("./initialize.test");
   require("./addTokensToWhitelist.test");
   require("./removeFromWhitelist.test");

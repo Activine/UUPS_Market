@@ -14,7 +14,7 @@ describe("Method: addTokensToWhitelist", () => {
   let marketplace: Marketplace;
   let result: ContractTransaction;
   let arrayOfWhitelistedTokens: string[];
-  let arrayOfSpecific = [false, false, true];
+  const arrayOfSpecific = [false, false, true];
 
   before(async () => {
     const deploy = await loadFixture(standardPrepare);
@@ -29,6 +29,7 @@ describe("Method: addTokensToWhitelist", () => {
   describe("When one of parameters is incorrect", () => {
     it("When caller not admin", async () => {
       const adminRole = await marketplace.ADMIN_ROLE();
+
       await expect(
         marketplace
           .connect(buyer)

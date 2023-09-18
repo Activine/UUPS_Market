@@ -1,13 +1,14 @@
 import { expect } from "chai";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { MyToken721, Marketplace, MyToken } from "../../types/typechain-types";
+import { Marketplace, MyToken } from "../../types/typechain-types";
 import { ContractTransaction } from "ethers";
 import { standardPrepare, createOffer } from "@test-utils";
 
 describe("Method: unlockTokens", () => {
-  let price: number = 100_000_000;
-  let fee: number = 1000 // 1% = 100
+  const price = 100_000_000;
+  const fee = 1000; // 1% = 100
+  const amountFee = (price * fee) / 10000;
 
   async function deployMarketplace() {
     const deploy = await standardPrepare();
@@ -46,6 +47,7 @@ describe("Method: unlockTokens", () => {
       const { seller, marketplace, myToken20 } = await loadFixture(standardPrepare);
 
       const adminRole = await marketplace.ADMIN_ROLE();
+
       await expect(
         marketplace.connect(seller).unlockTokens(myToken20.address)
       ).to.be.revertedWith(
@@ -78,14 +80,14 @@ describe("Method: unlockTokens", () => {
       await expect(result).to.changeTokenBalances(
         myToken20,
         [marketplace, owner],
-        [-(price * fee / 10000), (price * fee / 10000)]
+        [-amountFee, amountFee]
       );
     });
 
     it("should emit Withdraw event", async () => {
       await expect(result)
         .to.emit(marketplace, "Withdraw")
-        .withArgs(myToken20.address, (price * fee / 10000));
+        .withArgs(myToken20.address, amountFee);
     });
   });
 });

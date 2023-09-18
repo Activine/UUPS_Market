@@ -68,7 +68,7 @@ describe("Method: editOffer", () => {
     let marketplace: Marketplace;
     let resultOne: ContractTransaction;
     let resultTwo: ContractTransaction;
-    let price: number = 100_000_000_000;
+    const price = 100_000_000_000;
 
     before(async () => {
       const { ...res } = await loadFixture(deployMarketplace);
@@ -85,6 +85,7 @@ describe("Method: editOffer", () => {
 
       resultOne = await marketplace.connect(seller).editOffer(0, price, ZERO_ADDRESS);
       await resultOne.wait();
+
       resultTwo = await marketplace
         .connect(seller)
         .editOffer(1, price, myToken20.address);
@@ -97,7 +98,7 @@ describe("Method: editOffer", () => {
       });
 
       it("should edit offer", async () => {
-        let info = await marketplace.getOfferInfo(0);
+        const info = await marketplace.getOfferInfo(0);
 
         expect(info.creator).to.eq(seller.address);
         expect(info.price).to.eq(price);
@@ -122,7 +123,7 @@ describe("Method: editOffer", () => {
       });
 
       it("should edit offer", async () => {
-        let info = await marketplace.getOfferInfo(1);
+        const info = await marketplace.getOfferInfo(1);
 
         expect(info.creator).to.eq(seller.address);
         expect(info.price).to.eq(price);

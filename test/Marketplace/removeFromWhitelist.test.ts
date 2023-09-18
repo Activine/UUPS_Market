@@ -15,7 +15,7 @@ describe("Method: removeTokensFromWhitelist", () => {
   let resultOne: ContractTransaction;
   let resultTwo: ContractTransaction;
   let arrayOfWhitelistedTokens: string[];
-  let arrayOfSpecific = [false, false, true];
+  const arrayOfSpecific = [false, false, true];
 
   before(async () => {
     const deploy = await loadFixture(standardPrepare);
@@ -34,6 +34,7 @@ describe("Method: removeTokensFromWhitelist", () => {
   describe("When one of parameters is incorrect", () => {
     it("When caller not admin", async () => {
       const adminRole = await marketplace.ADMIN_ROLE();
+
       await expect(
         marketplace.connect(buyer).removeTokensFromWhitelist([ZERO_ADDRESS], [false])
       ).to.be.revertedWith(
@@ -71,11 +72,13 @@ describe("Method: removeTokensFromWhitelist", () => {
 
     it("should return supported sale tokens after removing", async () => {
       const arrayOfERC20 = await marketplace.getWhitelistedTokens(false);
+
       expect(arrayOfERC20.length).to.eq(1);
     });
 
     it("should return supported NFT tokens after removing", async () => {
       const arrayOfERC721 = await marketplace.getWhitelistedTokens(true);
+
       expect(arrayOfERC721.length).to.eq(0);
     });
 

@@ -4,12 +4,12 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Marketplace } from "../../types/typechain-types";
 import { ContractTransaction } from "ethers";
 import { ZERO_ADDRESS } from "../utils/constants";
-
 import { standardPrepare, createOffer } from "@test-utils";
 
 describe("Method: unlockETH", () => {
-  let price: number = 100_000_000;
-  let fee: number = 1000 // 1% = 100
+  const price = 100_000_000;
+  const fee = 1000; // 1% = 100
+  const amountFee = (price * fee) / 10000;
 
   async function deployMarketplace() {
     const deploy = await standardPrepare();
@@ -46,6 +46,7 @@ describe("Method: unlockETH", () => {
       const { seller, marketplace } = await loadFixture(standardPrepare);
 
       const adminRole = await marketplace.ADMIN_ROLE();
+
       await expect(marketplace.connect(seller).unlockETH()).to.be.revertedWith(
         `AccessControl: account ${seller.address.toLowerCase()} is missing role ${adminRole}`
       );
@@ -73,14 +74,14 @@ describe("Method: unlockETH", () => {
     it("should withdraw ETH", async () => {
       await expect(result).to.changeEtherBalances(
         [marketplace, owner],
-        [-(price * fee / 10000), (price * fee / 10000)]
+        [-amountFee, amountFee]
       );
     });
 
     it("should emit Withdraw event", async () => {
       await expect(result)
         .to.emit(marketplace, "Withdraw")
-        .withArgs(ZERO_ADDRESS, (price * fee / 10000));
+        .withArgs(ZERO_ADDRESS, amountFee);
     });
   });
 });
